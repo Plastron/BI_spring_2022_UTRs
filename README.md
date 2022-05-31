@@ -1,5 +1,8 @@
-# BI_spring_2022_UTRs
+# Evaluation of the evolutionary conservation of uORFs
+Student: Poliakov Dmitrii
+Supervisors: Yury Barbitov (Bioinformatics Institute), Michail Skoblov (Research Center of Medical Genetics)
 
+## Introduction
 There is a metric of evolutionary pressure of an open reading frame (ORF) which allows for finding ORFs under a selective constraint. It is based on calculating the expected number of synonymous, missense, and nonsense mutations and comparing it with the number of existing mutations in the sequenced genomes. The predicted/found nonsense mutations ratio shows if the URF is under a selective constraint. 
 
 ![image](https://user-images.githubusercontent.com/5071774/169591468-e6583e24-bfd6-40aa-9a8a-ab7f1e0e62cf.png)
@@ -13,6 +16,7 @@ They were lacking attention for a long time because of the paradigm "one mRNA - 
 
 If the majority of products of the uORFs are functional is still a matter of discussion though. Our goal is to try to find uORFs encoding functional proteins using the method described above.
 
+## Workflow description
 We were using a custom uORFs dataset provided by our supervisor. To calculate the expected mutation rate we were using trinucleotide mutation rates calculated using the gnomAD database in the paper https://doi.org/10.1038/s41586-020-2308-7. 
 
 The uORF dataset was in BED format, and to calculate the expected mutation rate we needed the uORFs sequences. There are ready-to-use decisions, but most of them require the genome sequence, so we wrote a lazy solution by ourselves. As this is a "yes or no" work, there will be a lot of such solutions, actually.
@@ -344,15 +348,32 @@ uORF_coords_with_real_vars.close()
 Now to compare the observed and expected number of mutations we were needed to (1) multiply the probabilities of mutations for each uORF by the doubled number of genomes in gnomAD v3.1.2 and (2) adjust the expected number of expected synonymous mutations to the number of synonymous mutations and then use the adjustment to obtain the number of expected misses and nonsense mutations.
 Which we have done.
 
+## Results
 ![image](https://user-images.githubusercontent.com/5071774/169602927-eb153183-58d0-4fc0-8325-63bc47187d42.png)
 ![image](https://user-images.githubusercontent.com/5071774/169602962-a30c5619-19de-4490-8fd9-aee9079cb8f0.png)
 ![image](https://user-images.githubusercontent.com/5071774/169603130-f8002350-5437-4a90-8ca2-ba6acef6e7b8.png)
 
-To our regret, the length of our uORF is too small to sss the significant effect of selection against loss of function mutations, as they are quite rare events even for large ORFs. And the majority of our uORFs are shorter than 28 base pairs.
+We would expect a significant difference between the expected and observed number of uORFs if the uORFs produce functional proteins. But as we can see from the LoF graph, for the majority of uORFs the number of both expected and observed mutation is very low, which doesn't allow us to see the significance.
+
+This could be due to the fact that the length of our uORF is too small to sss the significant effect of selection against loss of function mutations, as they are quite rare events even for large ORFs. And the majority of our uORFs are shorter than 28 base pairs.
 ![image](https://user-images.githubusercontent.com/5071774/169603568-b66e63c5-eb16-45d6-ab98-d29dc481cb80.png)
 
-But summarising the results, we see that for the whole dataset the number of observed nonsense mutations is twice as low as the number of expected ones. 
+But when we summarised the number of expected and observed mutations among the data frame, we saw that the number of observed nonsense mutations is twice as low as the number of expected ones.  
 ![image](https://user-images.githubusercontent.com/5071774/169603952-935f4b4f-b9bd-45da-ac79-3aa9f863303e.png)
-That's a sign that at least some of our uORFs could encode functional proteins, o we will try other methods to find them.
+
+## Conclusions
+ - The lengths of the majority of the uORFs in the data frame is too short for the significant pLoF analysis;
+ - The total number of observed loss of function mutations in the data frame is significantly lower than the number of expected ones, which shows that the data frame contains uORFS encoding functional proteins.
+
+## Future plans
+ - Try to use some other metrics, maybe based on uORFs evolutionary conservation,
+ - Try to find uORFs who were once a part of the main ORF.
+
+## References
+ - Nicola Whiffin, et al. Characterising the loss-of-function impact of 5’ untranslated region variants in 15,708 individuals. NATURE COMMUNICATIONS | (2020)11:2523 | https://doi.org/10.1038/s41467-019-10717-9
+ - Kaitlin E Samocha, et al. A framework for the interpretation of de novo mutation in human disease. Nature Genetics. Received 10 December 2013; accepted 9 July 2014; published online 3 August 2014; doi:10.1038/ng.3050
+ - Konrad J. Karczewski, et al. The mutational constraint spectrum quantified from variation in 141,456 humans. Nature volume 581, pages434–443 (2020) https://doi.org/10.1038/s41586-020-2308-7
+ - GRCh38.p13 Release 40, URL: https://www.gencodegenes.org/human/
+ - gnomAD database, URL:https://gnomad.broadinstitute.org/
 
 
